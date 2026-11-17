@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04061c">
+<meta name="robots" content="noindex">
+<title>Lotteria di Natale · MotoClub Domo '70</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+    @font-face { font-family: 'Oswald'; font-weight: 500; src: url('fonts/Oswald-500.woff2') format('woff2'); font-display: swap; }
+    @font-face { font-family: 'Oswald'; font-weight: 700; src: url('fonts/Oswald-700.woff2') format('woff2'); font-display: swap; }
+    :root { --oro: #d9a441; --oro-chiaro: #f6d27a; --rosso: #e10600; --notte: #04061c; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body { background: radial-gradient(ellipse at 28% 8%, #161a78 0%, #080b34 46%, #02030f 100%) fixed; color: #fff;
+        font-family: 'Oswald', 'Segoe UI', Roboto, sans-serif; -webkit-text-size-adjust: 100%; }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none;
+        background: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 4px, transparent 4px 8px); }
+    header { position: relative; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: linear-gradient(180deg, rgba(0,0,10,.7), rgba(0,0,10,.25));
+        border-bottom: 4px solid var(--rosso); box-shadow: 0 5px 0 var(--oro); }
+    .logo { width: 56px; height: 56px; border-radius: 50%; background: #fff; border: 3px solid var(--oro); display: grid; place-items: center; flex: none;
+        box-shadow: 0 0 14px rgba(217,164,65,.6); }
+    .logo img { width: 78%; height: 78%; object-fit: contain; }
+    .t1 { font-weight: 500; font-size: 12px; letter-spacing: 3px; color: var(--oro-chiaro); text-transform: uppercase; }
+    .t2 { font-weight: 700; font-size: 25px; line-height: 1.05; text-transform: uppercase; letter-spacing: 1px; transform: skewX(-8deg); transform-origin: left;
+        text-shadow: 0 3px 0 rgba(0,0,0,.5); }
+    main { position: relative; max-width: 640px; margin: 0 auto; padding: 16px 14px 28px; }
+    .scheda { border: 2px solid rgba(217,164,65,.55); border-radius: 14px; background: linear-gradient(180deg, rgba(14,19,66,.94), rgba(6,9,40,.96));
+        padding: 16px 14px; margin-bottom: 14px; text-align: center; box-shadow: 0 4px 18px rgba(0,0,0,.45); }
+    .etichetta { font-weight: 500; font-size: 13px; letter-spacing: 3px; color: var(--oro); text-transform: uppercase; }
+    .grande { font-weight: 700; font-size: clamp(26px, 8vw, 40px); line-height: 1.1; text-transform: uppercase; margin: 6px 0 2px; transform: skewX(-5deg); text-shadow: 0 3px 10px rgba(0,0,0,.6); }
+    .numero { font-weight: 700; font-size: clamp(54px, 18vw, 84px); line-height: 1.05; color: var(--oro-chiaro); letter-spacing: 4px; text-shadow: 0 0 16px rgba(217,164,65,.7); }
+    .nome { font-weight: 700; font-size: clamp(24px, 7vw, 34px); text-transform: uppercase; background: linear-gradient(180deg, #fff 55%, var(--oro-chiaro));
+        -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .finale { font-weight: 700; font-size: clamp(30px, 9vw, 46px); line-height: 1.1; text-transform: uppercase; color: var(--oro-chiaro); transform: skewX(-6deg); }
+    .avviso { background: #3d2e08; border: 1px solid var(--oro); color: var(--oro-chiaro); border-radius: 10px; padding: 8px 12px; font-size: 14px; margin-bottom: 12px; text-align: center; }
+    h2 { margin: 18px 0 8px; font-weight: 700; font-size: 17px; letter-spacing: 3px; color: var(--oro); text-transform: uppercase; }
+    ol { list-style: none; margin: 0; padding: 0; }
+    li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 8px; border-radius: 12px; background: rgba(255,255,255,.06);
+        border: 1px solid rgba(217,164,65,.28); }
+    li.nuovo { animation: arrivo 2.2s ease-out; border-color: var(--oro); }
+    @keyframes arrivo { 0% { background: rgba(255,230,140,.9); } 100% { background: rgba(255,255,255,.06); } }
+    li .n { flex: none; width: 30px; text-align: center; font-weight: 700; font-size: 18px; color: var(--oro); }
+    li .corpo { flex: 1; min-width: 0; }
+    li .premio { font-weight: 500; font-size: 17px; line-height: 1.15; overflow-wrap: anywhere; }
+    li .chi { font-weight: 700; font-size: 15px; color: #cfd4ff; text-transform: uppercase; }
+    li .num { flex: none; font-weight: 700; font-size: 26px; color: var(--oro-chiaro); letter-spacing: 1px; }
+    li.attesa { opacity: .5; background: transparent; border-style: dashed; }
+    li.attesa .num { color: #6c74b0; font-size: 18px; }
+    .piede { text-align: center; color: #7f88c8; font-size: 12px; margin-top: 18px; line-height: 1.6; }
+    .bandiera { height: 14px; margin-top: 22px; border-top: 3px solid var(--oro); background: repeating-conic-gradient(#fff 0 25%, #111 0 50%) 0 0 / 14px 14px; }
+    .punto { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #2fd16b; margin-right: 6px; animation: respiro 2s ease-in-out infinite; }
+    .punto.no { background: #ff5a4f; animation: none; }
+    @keyframes respiro { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+</style>
+</head>
+<body>
+<header>
+    <div class="logo"><img src="logo.png" alt=""></div>
+    <div><div class="t1">MotoClub Domo '70</div><div class="t2" id="titolo">Lotteria di Natale</div></div>
+</header>
+<main>
+    <div id="avviso" class="avviso" style="display:none"></div>
+    <div id="vista"></div>
+    <div class="piede"><span class="punto" id="punto"></span><span id="aggiornato">Collegamento…</span><br>La pagina si aggiorna da sola: non serve ricaricarla.</div>
+</main>
+<div class="bandiera"></div>
+
+<script>
+(() => {
+    'use strict';
+    // Indirizzo del database online (si imposta una volta sola, quando e' pronto il progetto Firebase). Vuoto = lotteria "non ancora iniziata".
+    const DB_URL = '';
+    const OGNI_SECONDI = 5;          // i telefoni sono tanti: poche richieste, leggere
+    const FERMO_DOPO_S = 150;        // senza novita' dal PC per tanto tempo: "in attesa di aggiornamenti"
+
+    const $ = id => document.getElementById(id);
+    const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    let ultimaFirma = '', visti = new Set(), primoGiro = true;
+
+    function orario(epoch) { return new Date(epoch * 1000).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }); }
+
+    function attesa(d) {
+        $('vista').innerHTML = '<div class="scheda"><div class="etichetta">' + esc((d && d.evento) || 'Lotteria di Natale') + '</div>' +
+            '<div class="grande">La lotteria non è ancora iniziata</div>' +
+            '<div class="etichetta" style="margin-top:10px">Tieni aperta questa pagina: i premi compaiono qui man mano che vengono estratti</div></div>';
+    }
+
+    function disegna(d) {
+        const estratti = d.estratti || [];
+        const ultimo = estratti.length ? estratti[estratti.length - 1] : null;
+        let alto = '';
+        if (d.stato === 'finita') {
+            alto = '<div class="scheda"><div class="finale">La lotteria è terminata</div><div class="grande" style="font-size:clamp(22px,7vw,32px)">Buon Natale trialisti!</div></div>';
+        } else if (d.ora) {
+            alto = '<div class="scheda"><div class="etichetta">Estrazione in corso · premio n° ' + esc(d.ora.n) + '</div><div class="grande">' + esc(d.ora.premio) + '</div>' +
+                '<div class="etichetta" style="margin-top:8px">… e il vincitore è …</div></div>';
+        } else if (ultimo) {
+            alto = '<div class="scheda"><div class="etichetta">Ultimo estratto · premio n° ' + esc(ultimo.n) + '</div><div class="grande">' + esc(ultimo.premio) + '</div>' +
+                '<div class="numero">' + esc(ultimo.numero) + '</div><div class="nome">' + esc(ultimo.nome || '') + '</div></div>';
+        }
+        const rim = (d.in_palio || []);
+        const righe = [...estratti].reverse().map(e =>
+            '<li class="' + (visti.has(e.n) || primoGiro ? '' : 'nuovo') + '"><span class="n">' + esc(e.n) + '</span><span class="corpo"><div class="premio">' + esc(e.premio) +
+            '</div><div class="chi">' + esc(e.nome || '') + '</div></span><span class="num">' + esc(e.numero) + '</span></li>').join('');
+        const prossimi = rim.map(p => '<li class="attesa"><span class="n">' + esc(p.n) + '</span><span class="corpo"><div class="premio">' + esc(p.premio) +
+            '</div></span><span class="num">in palio</span></li>').join('');
+        $('vista').innerHTML = alto +
+            (righe ? '<h2>Premi estratti (' + estratti.length + (d.totale ? ' su ' + d.totale : '') + ')</h2><ol>' + righe + '</ol>' : '') +
+            (prossimi ? '<h2>Ancora in palio</h2><ol>' + prossimi + '</ol>' : '');
+        estratti.forEach(e => visti.add(e.n));
+        primoGiro = false;
+    }
+
+    async function giro() {
+        let d = null, errore = false;
+        if (DB_URL) {
+            try {
+                const r = await fetch(DB_URL.replace(/\/$/, '') + '/lotteria.json?t=' + Date.now(), { cache: 'no-store' });
+                if (!r.ok) throw new Error(r.status);
+                d = await r.json();
+            } catch (e) { errore = true; }
+        }
+        $('punto').className = 'punto' + (errore ? ' no' : '');
+        if (errore) { $('aggiornato').textContent = 'Nessuna connessione: riprovo…'; return; }
+        const adesso = Date.now() / 1000;
+        if (!d || !d.stato || d.stato === 'non_iniziata') {
+            if (ultimaFirma !== 'attesa:' + JSON.stringify(d && d.evento)) { ultimaFirma = 'attesa:' + JSON.stringify(d && d.evento); attesa(d); }
+            if (d && d.titolo) $('titolo').textContent = d.titolo;
+            $('aggiornato').textContent = 'In attesa dell’inizio';
+            $('avviso').style.display = 'none';
+            return;
+        }
+        if (d.titolo) $('titolo').textContent = d.titolo;
+        const firma = JSON.stringify([d.stato, d.ora, d.estratti, d.in_palio, d.totale]);
+        if (firma !== ultimaFirma) { ultimaFirma = firma; disegna(d); }
+        const eta = adesso - (d.aggiornato || 0);
+        $('aggiornato').textContent = 'Ultimo aggiornamento alle ' + orario(d.aggiornato || adesso);
+        const fermo = d.stato !== 'finita' && eta > FERMO_DOPO_S;
+        $('avviso').style.display = fermo ? 'block' : 'none';
+        $('avviso').textContent = 'In attesa di aggiornamenti dalla regia… (ultimo alle ' + orario(d.aggiornato || adesso) + ')';
+    }
+
+    giro();
+    setInterval(giro, OGNI_SECONDI * 1000);
+})();
+</script>
+</body>
+</html>
