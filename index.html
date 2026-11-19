@@ -72,7 +72,7 @@
     'use strict';
     // Indirizzo del database online (si imposta una volta sola, quando e' pronto il progetto Firebase). Vuoto = lotteria "non ancora iniziata".
     const DB_URL = 'https://lotteria-domo70-default-rtdb.europe-west1.firebasedatabase.app';
-    const OGNI_SECONDI = 5;          // i telefoni sono tanti: poche richieste, leggere
+    const OGNI_SECONDI = 5;          // durante l'estrazione: i telefoni sono tanti, poche richieste e leggere
     const FERMO_DOPO_S = 150;        // senza novita' dal PC per tanto tempo: "in attesa di aggiornamenti"
 
     const $ = id => document.getElementById(id);
@@ -113,24 +113,41 @@
         primoGiro = false;
     }
 
+    function chiusa() {
+        $('vista').innerHTML = '<div class="scheda"><div class="etichetta">Lotteria di Natale</div>' +
+            '<div class="grande">Pagina non attiva</div>' +
+            '<div class="etichetta" style="margin-top:10px">Questa pagina è attiva solo durante la lotteria: riprova più tardi</div></div>';
+    }
+
+    // Ogni giro ritorna dopo quanti secondi richiedere i dati: pochi quando l'estrazione e' in corso, tanti quando non serve
+    // (cosi' i telefoni lasciati con la pagina aperta consumano pochissimo). In background (schermo spento) non si chiede niente.
     async function giro() {
-        let d = null, errore = false;
-        if (DB_URL) {
-            try {
-                const r = await fetch(DB_URL.replace(/\/$/, '') + '/lotteria.json?t=' + Date.now(), { cache: 'no-store' });
-                if (!r.ok) throw new Error(r.status);
-                d = await r.json();
-            } catch (e) { errore = true; }
+        let d = null;
+        if (!DB_URL) { if (ultimaFirma !== 'chiusa') { ultimaFirma = 'chiusa'; chiusa(); } return 60; }
+        try {
+            const r = await fetch(DB_URL.replace(/\/$/, '') + '/lotteria.json?t=' + Date.now(), { cache: 'no-store' });
+            if (r.status === 401 || r.status === 403) {          // database chiuso dal club: la pagina non e' attiva
+                $('punto').className = 'punto no';
+                if (ultimaFirma !== 'chiusa') { ultimaFirma = 'chiusa'; chiusa(); }
+                $('aggiornato').textContent = 'Pagina non attiva in questo momento';
+                $('avviso').style.display = 'none';
+                return 60;
+            }
+            if (!r.ok) throw new Error(r.status);
+            d = await r.json();
+        } catch (e) {
+            $('punto').className = 'punto no';
+            $('aggiornato').textContent = 'Nessuna connessione: riprovo…';
+            return 10;
         }
-        $('punto').className = 'punto' + (errore ? ' no' : '');
-        if (errore) { $('aggiornato').textContent = 'Nessuna connessione: riprovo…'; return; }
+        $('punto').className = 'punto';
         const adesso = Date.now() / 1000;
         if (!d || !d.stato || d.stato === 'non_iniziata') {
             if (ultimaFirma !== 'attesa:' + JSON.stringify(d && d.evento)) { ultimaFirma = 'attesa:' + JSON.stringify(d && d.evento); attesa(d); }
             if (d && d.titolo) $('titolo').textContent = d.titolo;
             $('aggiornato').textContent = 'In attesa dell’inizio';
             $('avviso').style.display = 'none';
-            return;
+            return 15;
         }
         if (d.titolo) $('titolo').textContent = d.titolo;
         const firma = JSON.stringify([d.stato, d.ora, d.estratti, d.in_palio, d.totale]);
@@ -140,10 +157,20 @@
         const fermo = d.stato !== 'finita' && eta > FERMO_DOPO_S;
         $('avviso').style.display = fermo ? 'block' : 'none';
         $('avviso').textContent = 'In attesa di aggiornamenti dalla regia… (ultimo alle ' + orario(d.aggiornato || adesso) + ')';
+        return d.stato === 'finita' ? 60 : OGNI_SECONDI;
     }
 
-    giro();
-    setInterval(giro, OGNI_SECONDI * 1000);
+    let timer = null;
+    async function avvia() {
+        clearTimeout(timer);
+        let prossimo = 10;
+        try { prossimo = await giro(); } catch (e) { }
+        if (document.visibilityState === 'visible') timer = setTimeout(avvia, prossimo * 1000);
+    }
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') avvia(); else clearTimeout(timer);      // schermo spento / altra app: si smette di chiedere
+    });
+    avvia();
 })();
 </script>
 </body>
